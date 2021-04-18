@@ -1,14 +1,14 @@
 import argparse
 import logging
+import sqlite3
+
 import argon2
 
 from argon2 import PasswordHasher
-from adkdb import AdkDatabase
+from adkdb import AdkDatabase, AdkException
 
 
 def add(args):
-    print(f'add called with args: {args}')
-
     ph = PasswordHasher(
         time_cost=args.iterations,
         memory_cost=args.memory,
@@ -18,41 +18,45 @@ def add(args):
     computed_hash = ph.hash(args.password)
 
     db = AdkDatabase('database.db')
-    db.insert(args.login, computed_hash)
 
-    logging.info('OK')
+    try:
+        db.insert(args.login, computed_hash)
+    except sqlite3.IntegrityError:
+        print('ERROR Login is present in database')
+        return
+
+    print('OK')
 
 
 def verify(args):
-    print(f'verify called with args: {args}')
-
     db = AdkDatabase('database.db')
-    hash_from_database = db.get_hash(args.login)
 
-    ph = PasswordHasher(
-        time_cost=args.iterations,
-        memory_cost=args.memory,
-        parallelism=args.threads,
-        type=argon2.Type.I
-    )
-    computed_hash = ph.hash(args.password)
+    try:
+        hash_from_database = db.get_hash(args.login)
+    except AdkException as e:
+        print(e)
+        return
 
-    if not ph.verify(computed_hash, hash_from_database):
-        logging.debug(f'Incorrect password for login {args.login}')
-        logging.info(False)
-    else:
-        logging.debug(f'Correct password for login {args.login}')
-        logging.info(True)
+    ph = PasswordHasher()
+
+    try:
+        ph.verify(hash_from_database, args.password)
+        print(True)
+    except argon2.exceptions.VerifyMismatchError:
+        print(False)
 
 
 def get_hash(args):
-    print(f'get_hash called with args: {args}')
-
     db = AdkDatabase('database.db')
-    hash_ = db.get_hash(args.login)
+
+    try:
+        hash_ = db.get_hash(args.login)
+    except AdkException as e:
+        print(e)
+        return
 
     logging.debug(f'Hash extracted for login {args.login}: {hash_}')
-    logging.info(hash_)
+    print(hash_)
 
 
 if __name__ == '__main__':

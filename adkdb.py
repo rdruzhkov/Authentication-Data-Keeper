@@ -4,6 +4,10 @@ import logging
 from contextlib import contextmanager
 
 
+class AdkException(BaseException):
+    pass
+
+
 @contextmanager
 def cursor(database_name):
     try:
@@ -53,7 +57,10 @@ class AdkDatabase:
         logging.debug(f'Extracting password hash for login: {login}.')
         with cursor(self.__database_name) as cur:
             cur.execute(f'select passwordHash from {self.__table_name} where login=?', (login, ))
-            result = cur.fetchone()[0]
+            try:
+                result = cur.fetchone()[0]
+            except TypeError:
+                raise AdkException('ERROR No such login in database')
 
         logging.debug(f'Extracted password hash for login {login}: {result}.')
         return result
