@@ -1,12 +1,7 @@
 
-- Implement console user interface with argparse
-    - Implement functionality:
-        - Insert login / password
-        - Verify login / password
-        - Get hash of login
-    - Add arguments:
-        - Verbosity of output (for all)
-        - Iterations (for insert)
-        - Memory usage (for insert)
-        - Threads to use (for insert)
-- Measure speed and memory consumption
+This is authentication data keeper (thanks cap).
+
+To get list of available commands and common arguments enter: python ask.py -h
+
+To get list of arguments for particular command enter: python ask.py <command> -h
+Example: python ask.py add -h
