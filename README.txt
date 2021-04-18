@@ -1,5 +1,12 @@
 
-1. Implement database class with:
-    - Auto table creation
-    - Adding pair login / password
-    - Extracting hash by login
+- Implement console user interface with argparse
+    - Implement functionality:
+        - Insert login / password
+        - Verify login / password
+        - Get hash of login
+    - Add arguments:
+        - Verbosity of output (for all)
+        - Iterations (for insert)
+        - Memory usage (for insert)
+        - Threads to use (for insert)
+- Measure speed and memory consumption
