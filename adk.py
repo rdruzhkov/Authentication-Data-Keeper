@@ -98,6 +98,7 @@ class MainWindow(tk.Tk):
                not re.search(r"[A-Z]", password) or \
                not re.search(r"[0-9]", password) or \
                not re.search(r"[!#$%&'()*+,-./[\\\]^_`{|}~\"r]", password) or \
+               not re.fullmatch(r"[a-zA-Z0-9!#$%&'()*+,-./[\\\]^_`{|}~\"r]+", password) or \
                not 8 <= len(password) <= 30:
                 raise ValidationError(
 '''
