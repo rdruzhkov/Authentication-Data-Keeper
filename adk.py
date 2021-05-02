@@ -35,15 +35,17 @@ class MainWindow(tk.Tk):
         def __init__(self, master):
             super().__init__(master)
 
+            self.__is_password_shown = False
+
             self.__label_login = tk.Label(self, text="Login:")
             self.__label_login.grid(row=0, column=0, sticky="E", padx=PADDING_X, pady=PADDING_Y)
-            self.__entry_login = tk.Entry(self, width=50)
-            self.__entry_login.grid(row=0, column=1, columnspan=3, padx=PADDING_X, pady=PADDING_Y)
+            self.__entry_login = tk.Entry(self, width=45)
+            self.__entry_login.grid(row=0, column=1, sticky="W", columnspan=3, padx=PADDING_X, pady=PADDING_Y)
 
             self.__label_password = tk.Label(self, text="Password:")
             self.__label_password.grid(row=1, column=0, sticky="E", padx=PADDING_X, pady=PADDING_Y)
-            self.__entry_password = tk.Entry(self, width=50)
-            self.__entry_password.grid(row=1, column=1, columnspan=3, padx=PADDING_X, pady=PADDING_Y)
+            self.__entry_password = tk.Entry(self, width=31, show="*",)
+            self.__entry_password.grid(row=1, column=1, sticky="W", columnspan=2, padx=PADDING_X, pady=PADDING_Y)
 
             self.__label_iterations = tk.Label(self, text="Iterations:")
             self.__label_iterations.grid(row=0, column=4, sticky="E", padx=PADDING_X, pady=PADDING_Y)
@@ -72,6 +74,9 @@ class MainWindow(tk.Tk):
 
             self.__button_verify = tk.Button(self, text='Verify', width=10, command=self.__button_verify_handler)
             self.__button_verify.grid(row=2, column=3, sticky='NW', padx=PADDING_X, pady=PADDING_Y)
+
+            self.__button_show_password = tk.Button(self, text='Show', width=10, command=self.__button_show_password_handler)
+            self.__button_show_password.grid(row=1, column=3, sticky='NW', padx=PADDING_X, pady=PADDING_Y)
 
         def __validate_and_get_login(self):
             login = self.__entry_login.get()
@@ -147,6 +152,14 @@ then 8 and less then 30 characters.
                 raise ValidationError(f'Threads field must contain value from {THREADS_MIN} to {THREADS_MAX}')
 
             return threads
+
+        def __button_show_password_handler(self):
+            if self.__is_password_shown:
+                self.__entry_password.config(show="*")
+            else:
+                self.__entry_password.config(show="")
+
+            self.__is_password_shown = not self.__is_password_shown
 
         def __button_add_handler(self):
             logging.debug('__button_add_handler called')
