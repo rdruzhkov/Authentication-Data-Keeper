@@ -1,4 +1,5 @@
 import logging
+import re
 import sqlite3
 import tkinter as tk
 from tkinter import messagebox
@@ -77,12 +78,28 @@ class MainWindow(tk.Tk):
             if not login:
                 raise ValidationError('Please fill login field.')
 
+            if not re.fullmatch(r"^[a-zA-Z0-9]+$", login) or \
+               not 4 <= len(login) <= 20:
+                raise ValidationError('Login must contain letters or numerals and be more then 4 and less then 20 characters')
+
             return login
 
         def __validate_and_get_password(self):
             password = self.__entry_password.get()
             if not password:
                 raise ValidationError('Please fill password field.')
+
+            if not re.search(r"[a-z]", password) or \
+               not re.search(r"[A-Z]", password) or \
+               not re.search(r"[0-9]", password) or \
+               not re.search(r"[!#$%&'()*+,-./[\\\]^_`{|}~\"r]", password) or \
+               not 8 <= len(password) <= 30:
+                raise ValidationError(
+'''
+Password must contain small and big letters, numerals and special characters, password also must be more 
+then 8 and less then 30 characters.
+'''
+)
 
             return password
 
