@@ -1,4 +1,3 @@
-import argparse
 import logging
 import sqlite3
 import tkinter as tk
